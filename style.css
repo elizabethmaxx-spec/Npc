@@ -1,27 +1,65 @@
-/* Уменьшенный размер */
+/* Делаем фон всей страницы прозрачным */
+html, body {
+    margin: 0;
+    padding: 0;
+    background-color: rgba(0, 0, 0, 0) !important; /* Убираем белый фон */
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* Контейнер для NPC */
+#npc-container {
+    position: absolute; /* Позволяет двигать NPC по экрану */
+    top: 100px; /* Начальная позиция сверху */
+    left: 100px; /* Начальная позиция слева */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: grab;
+    z-index: 9999; /* Чтобы быть поверх всего */
+    touch-action: none;
+    transition: transform 0.2s ease; /* Для поворотов при карабканьи */
+}
+
+/* Уменьшаем размер и добавляем стиль Frutiger Aero */
 .npc {
-    width: 60px;
+    width: 60px; /* Уменьшили со 100px */
     height: 60px;
     background: radial-gradient(circle at 30% 30%, #4fc3f7, #0288d1);
     border-radius: 50%;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2), inset 0 -3px 10px rgba(0,0,0,0.3);
     position: relative;
     border: 2px solid rgba(255,255,255,0.5);
-    transition: all 0.3s ease; /* Плавный поворот при карабканьи */
+    animation: float 3s ease-in-out infinite; /* NPC теперь плавно качается */
 }
 
-/* Анимация переваливания при ходьбе */
-@keyframes walk {
-    0% { transform: rotate(-5deg) translateY(0); }
-    50% { transform: rotate(5deg) translateY(-5px); }
-    100% { transform: rotate(-5deg) translateY(0); }
+/* Глянцевый блик (для эстетики) */
+.shimmer {
+    position: absolute;
+    top: 3px;
+    left: 15%;
+    width: 70%;
+    height: 40%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0));
+    border-radius: 50% 50% 40% 40%;
 }
 
-.walking {
-    animation: walk 0.5s infinite;
+/* Облачко с текстом (стильное) */
+.bubble {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #0288d1;
+    border-radius: 12px;
+    padding: 5px 10px;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    font-size: 12px;
+    margin-bottom: 5px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    white-space: nowrap; /* Чтобы текст не переносился */
 }
 
-/* Когда он карабкается по стене, мы будем поворачивать его через JS */
-.climbing {
-    animation: walk 0.5s infinite;
+/* Анимация покачивания */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
