@@ -1,59 +1,29 @@
-const npc = document.getElementById('npc-container');
-const speech = document.getElementById('speech');
+const el = document.getElementById('npc-container');
+const npcBody = document.getElementById('npc');
+let posX = 100, posY = 100;
+let speedX = 2, speedY = 0;
 
-let isDragging = false;
-let currentX;
-let currentY;
-let initialX;
-let initialY;
-let xOffset = 0;
-let yOffset = 0;
+function update() {
+    posX += speedX;
+    posY += speedY;
 
-// Функции для перетаскивания (работают и мышкой, и пальцем)
-npc.addEventListener("pointerdown", dragStart);
-document.addEventListener("pointermove", drag);
-document.addEventListener("pointerup", dragEnd);
-
-function dragStart(e) {
-    initialX = e.clientX - xOffset;
-    initialY = e.clientY - yOffset;
-    if (e.target === npc || npc.contains(e.target)) {
-        isDragging = true;
+    // Проверка границ экрана (карабканье)
+    if (posX + 60 > window.innerWidth || posX < 0) {
+        speedX = 0;
+        speedY = (Math.random() > 0.5 ? 2 : -2); // Начинает ползти вверх или вниз
+        npcBody.style.transform = 'rotate(90deg)'; // Поворот к стене
     }
-}
-
-function drag(e) {
-    if (isDragging) {
-        e.preventDefault();
-        currentX = e.clientX - initialX;
-        currentY = e.clientY - initialY;
-        xOffset = currentX;
-        yOffset = currentY;
-        setTranslate(currentX, currentY, npc);
+    
+    if (posY + 60 > window.innerHeight || posY < 0) {
+        speedY = 0;
+        speedX = (Math.random() > 0.5 ? 2 : -2);
+        npcBody.style.transform = 'rotate(0deg)';
     }
+
+    el.style.left = posX + 'px';
+    el.style.top = posY + 'px';
+    
+    requestAnimationFrame(update);
 }
 
-function setTranslate(xPos, yPos, el) {
-    el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
-}
-
-function dragEnd() {
-    isDragging = false;
-}
-
-// Случайные фразы (можно добавить про маму, хомяка или Nothing Phone!)
-const phrases = [
-    "Как дела, Семён?",
-    "Пойдем кодить?",
-    "Ничего себе!",
-    "Я слежу за тобой 👀",
-    "Проект 'Road to Summer' идет по плану?"
-];
-
-setInterval(() => {
-    if (!isDragging) {
-        speech.innerText = phrases[Math.floor(Math.random() * phrases.length)];
-        speech.style.opacity = 1;
-        setTimeout(() => speech.style.opacity = 0, 3000);
-    }
-}, 8000);
+update();
