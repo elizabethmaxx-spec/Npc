@@ -1,9 +1,4 @@
-[app]
-title = MyCuteNPC
-package.name = cutenpc
-source.dir = .
-permissions = SYSTEM_ALERT_WINDOW, FOREGROUND_SERVICE
-services = MyService:service.py
-
-# Указываем иконку
-icon.filename = icon.png
+android.permissions = SYSTEM_ALERT_WINDOW, INTERNET, FOREGROUND_SERVICE
+android.api = 31
+# Это заставляет приложение работать как сервис, чтобы NPC не исчезал
+android.services = npc_service:service.py
