@@ -1,21 +1,33 @@
-from android.permissions import request_permissions, Permission
+from kivy.app import App
+from kivy.uix.webview import WebView
+from kivy.core.window import Window
 from jnius import autoclass, cast
 
-# Обращаемся к Android API
-Settings = autoclass('android.provider.Settings')
-Uri = autoclass('android.net.Uri')
-PythonActivity = autoclass('org.kivy.android.PythonActivity')
-Intent = autoclass('android.content.Intent')
+class NPCApp(App):
+    def build(self):
+        # Запрос разрешения на Overlay в Android
+        self.request_overlay_permission()
+        
+        # Делаем окно прозрачным
+        Window.clearcolor = (0, 0, 0, 0)
+        
+        # Загружаем твой сайт с NPC (локальный или с Vercel)
+        return WebView(url="index.html")
 
-def check_overlay_permission():
-    activity = PythonActivity.mActivity
-    # Проверяем, есть ли уже разрешение
-    if not Settings.canDrawOverlays(activity):
-        # Если нет, открываем настройки
-        intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-        intent.setData(Uri.parse("package:" + activity.getPackageName()))
-        activity.startActivityForResult(intent, 1)
-        return False
-    return True
+    def request_overlay_permission(self):
+        try:
+            Settings = autoclass('android.provider.Settings')
+            Context = autoclass('android.content.Context')
+            Uri = autoclass('android.net.Uri')
+            PythonActivity = autoclass('org.kivy.android.PythonActivity')
+            activity = PythonActivity.mActivity
 
-# Далее здесь запускается WebView с твоим HTML
+            if not Settings.canDrawOverlays(activity):
+                intent = autoclass('android.content.Intent')(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                intent.setData(Uri.parse("package:" + activity.getPackageName()))
+                activity.startActivity(intent)
+        except:
+            print("Это не Android или ошибка доступа")
+
+if __name__ == '__main__':
+    NPCApp().run()
